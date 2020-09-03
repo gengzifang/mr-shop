@@ -3,13 +3,20 @@ package com.baidu.shop.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.baidu.shop.base.BaseApiService;
 import com.baidu.shop.base.Result;
+import com.baidu.shop.entity.CategoryBrandEntity;
 import com.baidu.shop.entity.CategoryEntity;
+import com.baidu.shop.entity.SpecGroupEntity;
+import com.baidu.shop.entity.SpecParamEntity;
+import com.baidu.shop.mapper.CategoryBrandMapper;
 import com.baidu.shop.mapper.CategoryMapper;
+import com.baidu.shop.mapper.SpecGroupMapper;
+import com.baidu.shop.mapper.SpecParamMapper;
 import com.baidu.shop.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 import tk.mybatis.mapper.entity.Example;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -24,6 +31,13 @@ public class CategoryServiceImpl extends BaseApiService implements CategoryServi
 
     @Autowired
     private CategoryMapper categoryMapper;
+
+    @Resource
+    private CategoryBrandMapper categoryBrandMapper;
+
+    @Resource
+    private SpecGroupMapper specGroupMapper;
+
 
     @Override
     public Result<List<CategoryEntity>> getCategoryByPid(Integer pid) {
@@ -68,22 +82,43 @@ public class CategoryServiceImpl extends BaseApiService implements CategoryServi
 
         //通过当前id查询分类信息
         CategoryEntity categoryEntity = categoryMapper.selectByPrimaryKey(id);
-        if(null == categoryEntity.getId()){
+        if (null == categoryEntity.getId()) {
             return this.setResultError("当前id不存在");
         }
         //不能查询到分类信息直接return
         //如果能查到 判断当前节点是不是父节点
-        if(categoryEntity.getIsParent() == 1){
+        if (categoryEntity.getIsParent() == 1) {
             return this.setResultError("当前节点为父节点,不能删除");
         }
+        //通过分类id查询  关系表中  和品牌的关系
+        Example example1 = new Example(CategoryBrandEntity.class);
+        example1.createCriteria().andEqualTo("categoryId", id);
+        List<CategoryBrandEntity> list1 = categoryBrandMapper.selectByExample(example1);
+        //判断是否有和品牌的绑定
+        //如果有返回信息
+        if (list1.size() >= 1) {
+            return this.setResultError("该分类绑定有品牌不能删除");
+        }
+
+        //通过分类id查询  关系表中  和规格的关系
+        Example example2 = new Example(SpecGroupEntity.class);
+        example2.createCriteria().andEqualTo("cid", id);
+        List<SpecGroupEntity> list2 = specGroupMapper.selectByExample(example2);
+        //判断是否有和规格的绑定
+        //如果有返回信息
+        if (list2.size() >= 1) {
+            return this.setResultError("该分类绑定有规格不能删除");
+        }
+
+
         //还需要判断一下除了当前被删除的id外还有没有父id是当前节点的数据
         Example example = new Example(CategoryEntity.class);
 
-        example.createCriteria().andEqualTo("parentId",categoryEntity.getParentId());
+        example.createCriteria().andEqualTo("parentId", categoryEntity.getParentId());
 
         List<CategoryEntity> list = categoryMapper.selectByExample(example);
 
-        if(list.size() == 1){
+        if (list.size() == 1) {
             CategoryEntity categoryEntity1 = new CategoryEntity();
             categoryEntity1.setId(categoryEntity.getParentId());
             categoryEntity1.setIsParent(0);
@@ -103,7 +138,6 @@ public class CategoryServiceImpl extends BaseApiService implements CategoryServi
     public Result<List<CategoryEntity>> getByBrand(Integer brandId) {
 
         List<CategoryEntity> list = categoryMapper.getByBrand(brandId);
-
 
 
         return this.setResultSuccess(list);
