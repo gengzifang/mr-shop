@@ -13,5 +13,19 @@
 
     <!--父级项目不需要打包所有packging的类型为pom-->
     <packaging>pom</packaging>
+    <modules>
+        <module>mingrui-shop-common-core</module>
+    </modules>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>com.belerweb</groupId>
+            <artifactId>pinyin4j</artifactId>
+            <version>2.5.1</version>
+        </dependency>
+
+    </dependencies>
+
 
 </project>
