@@ -3,14 +3,8 @@ package com.baidu.shop.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.baidu.shop.base.BaseApiService;
 import com.baidu.shop.base.Result;
-import com.baidu.shop.entity.CategoryBrandEntity;
-import com.baidu.shop.entity.CategoryEntity;
-import com.baidu.shop.entity.SpecGroupEntity;
-import com.baidu.shop.entity.SpecParamEntity;
-import com.baidu.shop.mapper.CategoryBrandMapper;
-import com.baidu.shop.mapper.CategoryMapper;
-import com.baidu.shop.mapper.SpecGroupMapper;
-import com.baidu.shop.mapper.SpecParamMapper;
+import com.baidu.shop.entity.*;
+import com.baidu.shop.mapper.*;
 import com.baidu.shop.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,6 +31,9 @@ public class CategoryServiceImpl extends BaseApiService implements CategoryServi
 
     @Resource
     private SpecGroupMapper specGroupMapper;
+
+    @Resource
+    private BrandMapper brandMapper;
 
 
     @Override
@@ -96,6 +93,8 @@ public class CategoryServiceImpl extends BaseApiService implements CategoryServi
         List<CategoryBrandEntity> list1 = categoryBrandMapper.selectByExample(example1);
         //判断是否有和品牌的绑定
         //如果有返回信息
+
+        //不能打印绑定的品牌名称 太多了
         if (list1.size() >= 1) {
             return this.setResultError("该分类绑定有品牌不能删除");
         }
@@ -106,8 +105,14 @@ public class CategoryServiceImpl extends BaseApiService implements CategoryServi
         List<SpecGroupEntity> list2 = specGroupMapper.selectByExample(example2);
         //判断是否有和规格的绑定
         //如果有返回信息
+
         if (list2.size() >= 1) {
-            return this.setResultError("该分类绑定有规格不能删除");
+            String mag = "";
+            for (SpecGroupEntity spec : list2) {
+                mag += "," + spec.getName();
+            }
+
+            return this.setResultError("该分类绑定有规格" + "(" + mag  + ")" + "不能删除");
         }
 
 

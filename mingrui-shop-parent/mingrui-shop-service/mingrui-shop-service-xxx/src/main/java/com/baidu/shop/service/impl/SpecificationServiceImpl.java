@@ -60,6 +60,7 @@ public class SpecificationServiceImpl extends BaseApiService implements Specific
         return this.setResultSuccess();
     }
 
+
     @Override
     public Result<List<SpecGroupEntity>> deletes(SpecGroupDTO specGroupDTO) {
 
@@ -69,8 +70,14 @@ public class SpecificationServiceImpl extends BaseApiService implements Specific
 
         List<SpecParamEntity> list = specParamMapper.selectByExample(example);
 
+
         if (list.size() >= 1) {
-            return this.setResultError("规格内有规格信息不能删除");
+            String mag ="";
+            for(SpecParamEntity ParamName : list){
+                mag += " " +ParamName.getName();
+            }
+
+            return this.setResultError("规格内有规格信息" + "(" + mag +"," +")" + "不能删除");
         }
 
         specGroupMapper.deleteByPrimaryKey(specGroupDTO.getId());
