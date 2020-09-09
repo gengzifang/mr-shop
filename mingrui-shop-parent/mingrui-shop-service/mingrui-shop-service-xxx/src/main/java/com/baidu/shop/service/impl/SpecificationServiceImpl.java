@@ -11,6 +11,7 @@ import com.baidu.shop.mapper.SpecGroupMapper;
 import com.baidu.shop.mapper.SpecParamMapper;
 import com.baidu.shop.service.SpecificationService;
 import com.baidu.shop.utils.BaiduBeanUtil;
+import com.baidu.shop.utils.ObjectUtil;
 import org.springframework.web.bind.annotation.RestController;
 import tk.mybatis.mapper.entity.Example;
 
@@ -72,12 +73,12 @@ public class SpecificationServiceImpl extends BaseApiService implements Specific
 
 
         if (list.size() >= 1) {
-            String mag ="";
-            for(SpecParamEntity ParamName : list){
-                mag += " " +ParamName.getName();
+            String mag = "";
+            for (SpecParamEntity ParamName : list) {
+                mag += " " + ParamName.getName();
             }
 
-            return this.setResultError("规格内有规格信息" + "(" + mag +"," +")" + "不能删除");
+            return this.setResultError("规格内有规格信息" + "(" + mag + "," + ")" + "不能删除");
         }
 
         specGroupMapper.deleteByPrimaryKey(specGroupDTO.getId());
@@ -85,16 +86,22 @@ public class SpecificationServiceImpl extends BaseApiService implements Specific
         return this.setResultSuccess();
     }
 
+
     @Override
     public Result<List<SpecParamEntity>> getSpecParamInfo(SpecParamDTO specParamDTO) {
 
-        if (null == specParamDTO.getGroupId()) return this.setResultError("规格组id不能为空");
+        //if (null == specParamDTO.getGroupId()) return this.setResultError("规格组id不能为空");
 
 
         Example example = new Example(SpecParamEntity.class);
 
-        example.createCriteria().andEqualTo("groupId", specParamDTO.getGroupId());
+        if (ObjectUtil.isNotNull(specParamDTO.getGroupId())) {
+            example.createCriteria().andEqualTo("groupId", specParamDTO.getGroupId());
+        }
 
+        if (ObjectUtil.isNotNull(specParamDTO.getCid())) {
+            example.createCriteria().andEqualTo("cid", specParamDTO.getCid());
+        }
 
         List<SpecParamEntity> list = specParamMapper.selectByExample(example);
 

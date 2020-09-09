@@ -15,7 +15,6 @@ import lombok.Data;
 @ApiModel(value = "BaseDTO用于数据传输,其他dto需要继承此类")
 public class BaseDTO {
 
-   // Integer page,Integer rows,String sort,Boolean desc,String name
 
     @ApiModelProperty(value = "当前页", example = "1")
     private Integer page;
@@ -27,14 +26,16 @@ public class BaseDTO {
     private String sort;
 
     @ApiModelProperty(value = "是否升序")
-    private Boolean desc;
+    private String order;
 
 
     @ApiModelProperty(hidden = true)
     public String getOrderByClause(){
-        if(null != desc){
-            return sort + " " + (desc?"desc":"");
+        if(null != order){
+            return sort + " " + (order.replace("false","asc").replace("true","desc"));
         }
         return null;
     }
+
+
 }
