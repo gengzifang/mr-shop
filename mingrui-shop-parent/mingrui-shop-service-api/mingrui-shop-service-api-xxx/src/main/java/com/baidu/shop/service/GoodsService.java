@@ -9,10 +9,9 @@ import com.baidu.shop.entity.SpuEntity;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.ibatis.annotations.Delete;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+
 
 @Api(value = "商品接口")
 public interface GoodsService {
@@ -41,4 +40,8 @@ public interface GoodsService {
     @ApiOperation(value = "删除商品")
     @DeleteMapping(value = "goods/del")
     Result<JSONObject> delGoods(Integer spuId);
+
+    @ApiOperation(value = "上下架商品")
+    @GetMapping(value = "goods/update")
+    Result<JSONObject> editGoodsBySaleable(Integer spuId,Integer saleable);
 }

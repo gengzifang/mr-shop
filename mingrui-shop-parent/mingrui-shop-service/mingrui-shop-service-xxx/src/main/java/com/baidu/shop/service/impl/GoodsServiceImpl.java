@@ -53,6 +53,17 @@ public class GoodsServiceImpl extends BaseApiService implements GoodsService {
     private StockMapper stockMapper;
 
 
+    @Override
+    public Result<JSONObject> editGoodsBySaleable(Integer spuId, Integer saleable) {
+
+        if (saleable != null && spuId != null) {
+            spuMapper.editGoodsBySaleable(spuId, saleable);
+        }
+
+
+        return this.setResultSuccess();
+    }
+
     @Transactional
     @Override
     public Result<JSONObject> GoodsSave(SpuDTO spuDTO) {
@@ -155,6 +166,7 @@ public class GoodsServiceImpl extends BaseApiService implements GoodsService {
 
         return this.setResultSuccess();
     }
+
 
     public List<Long> getSkuIdArrBySpuId(Integer spuId) {
 

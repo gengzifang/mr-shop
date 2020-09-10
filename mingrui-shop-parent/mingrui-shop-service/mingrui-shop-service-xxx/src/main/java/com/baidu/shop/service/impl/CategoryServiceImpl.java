@@ -3,6 +3,7 @@ package com.baidu.shop.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.baidu.shop.base.BaseApiService;
 import com.baidu.shop.base.Result;
+import com.baidu.shop.dto.SpuDTO;
 import com.baidu.shop.entity.*;
 import com.baidu.shop.mapper.*;
 import com.baidu.shop.service.CategoryService;
@@ -33,7 +34,7 @@ public class CategoryServiceImpl extends BaseApiService implements CategoryServi
     private SpecGroupMapper specGroupMapper;
 
     @Resource
-    private BrandMapper brandMapper;
+    private SpuMapper spuMapper;
 
 
     @Override
@@ -112,7 +113,16 @@ public class CategoryServiceImpl extends BaseApiService implements CategoryServi
                 mag += "," + spec.getName();
             }
 
-            return this.setResultError("该分类绑定有规格" + "(" + mag  + ")" + "不能删除");
+            return this.setResultError("该分类绑定有规格" + "(" + mag + ")" + "不能删除");
+        }
+
+
+        Example example3 = new Example(SpuEntity.class);
+        example3.createCriteria().andEqualTo("cid3", id);
+
+        List<SpuEntity> spuEntities = spuMapper.selectByExample(example3);
+        if (spuEntities.size() >= 1) {
+            return this.setResultError("该分类绑定有商品,不能删除");
         }
 
 
