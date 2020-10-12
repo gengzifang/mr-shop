@@ -1,8 +1,8 @@
 package com.baidu.shop.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.baidu.shop.base.BaseApiService;
-import com.baidu.shop.base.Result;
+import com.baidu.base.BaseApiService;
+import com.baidu.base.Result;
 import com.baidu.shop.dto.SpecGroupDTO;
 import com.baidu.shop.dto.SpecParamDTO;
 import com.baidu.shop.entity.SpecGroupEntity;
@@ -10,8 +10,8 @@ import com.baidu.shop.entity.SpecParamEntity;
 import com.baidu.shop.mapper.SpecGroupMapper;
 import com.baidu.shop.mapper.SpecParamMapper;
 import com.baidu.shop.service.SpecificationService;
-import com.baidu.shop.utils.BaiduBeanUtil;
-import com.baidu.shop.utils.ObjectUtil;
+import com.baidu.utils.BaiduBeanUtil;
+import com.baidu.utils.ObjectUtil;
 import org.springframework.web.bind.annotation.RestController;
 import tk.mybatis.mapper.entity.Example;
 
@@ -95,12 +95,17 @@ public class SpecificationServiceImpl extends BaseApiService implements Specific
 
         Example example = new Example(SpecParamEntity.class);
 
+        Example.Criteria criteria = example.createCriteria();
+
         if (ObjectUtil.isNotNull(specParamDTO.getGroupId())) {
-            example.createCriteria().andEqualTo("groupId", specParamDTO.getGroupId());
+            criteria.andEqualTo("groupId", specParamDTO.getGroupId());
         }
 
         if (ObjectUtil.isNotNull(specParamDTO.getCid())) {
-            example.createCriteria().andEqualTo("cid", specParamDTO.getCid());
+            criteria.andEqualTo("cid", specParamDTO.getCid());
+
+        }if (ObjectUtil.isNotNull(specParamDTO.getGeneric())) {
+            criteria.andEqualTo("generic", specParamDTO.getGeneric());
         }
 
         List<SpecParamEntity> list = specParamMapper.selectByExample(example);

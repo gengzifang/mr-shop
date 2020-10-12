@@ -1,7 +1,7 @@
 package com.baidu.shop.service.impl;
 
-import com.baidu.shop.base.BaseApiService;
-import com.baidu.shop.base.Result;
+import com.baidu.base.BaseApiService;
+import com.baidu.base.Result;
 import com.baidu.shop.dto.BrandDTO;
 import com.baidu.shop.entity.BrandEntity;
 import com.baidu.shop.entity.CategoryBrandEntity;
@@ -10,10 +10,10 @@ import com.baidu.shop.mapper.BrandMapper;
 import com.baidu.shop.mapper.CategoryBrandMapper;
 import com.baidu.shop.mapper.SpuMapper;
 import com.baidu.shop.service.BrandService;
-import com.baidu.shop.utils.BaiduBeanUtil;
-import com.baidu.shop.utils.ObjectUtil;
-import com.baidu.shop.utils.PinyinUtil;
-import com.baidu.shop.utils.StringUtil;
+import com.baidu.utils.BaiduBeanUtil;
+import com.baidu.utils.ObjectUtil;
+import com.baidu.utils.PinyinUtil;
+import com.baidu.utils.StringUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.gson.JsonObject;
@@ -47,6 +47,36 @@ public class BrandServiceImpl extends BaseApiService implements BrandService {
 
 
     @Override
+    public Result<List<BrandEntity>> getBrandInfoList(BrandDTO brandDTO) {
+
+        if(ObjectUtil.isNotNull(brandDTO.getPage()) && ObjectUtil.isNotNull(brandDTO.getRows())){
+            PageHelper.startPage(brandDTO.getPage(),brandDTO.getRows());
+        }
+
+        Example example = new Example(BrandEntity.class);
+
+        if(brandDTO.getSort() != null){
+            example.setOrderByClause(brandDTO.getOrderByClause());
+        }
+        Example.Criteria criteria = example.createCriteria();
+
+        if(ObjectUtil.isNotNull(brandDTO.getId())){
+            criteria.andEqualTo("id",brandDTO.getId());
+        }
+
+        if(brandDTO.getName() != null){
+            example.createCriteria().andLike("name","%" + brandDTO.getName() + "%");
+        }
+
+        List<BrandEntity> list = brandMapper.selectByExample(example);
+
+        PageInfo<BrandEntity> info = new PageInfo<>(list);
+
+
+        return this.setResultSuccess(info);
+    }
+
+    @Override
     public Result<List<BrandEntity>> getBrandByCategory(Integer cid) {
 
         if (ObjectUtil.isNotNull(cid)) {
@@ -59,21 +89,41 @@ public class BrandServiceImpl extends BaseApiService implements BrandService {
     }
 
     @Override
+    public Result<List<BrandEntity>> getBrandByIds(String brandIds) {
+
+        List<Integer> brandIdList = Arrays.asList(brandIds.split(","))
+                .stream().map(brandIdStr -> Integer.parseInt(brandIdStr))
+                .collect(Collectors.toList());
+
+        List<BrandEntity> list = brandMapper.selectByIdList(brandIdList);
+
+        return this.setResultSuccess(list);
+    }
+
+
+    @Override
     public Result<PageInfo<BrandEntity>> getBrandInfo(BrandDTO brandDTO) {
 
         //分页
-        PageHelper.startPage(brandDTO.getPage(), brandDTO.getRows());
+        if(null != brandDTO.getPage() && null != brandDTO.getRows()){
+            PageHelper.startPage(brandDTO.getPage(), brandDTO.getRows());
+        }
 
         Example example = new Example(BrandEntity.class);
 
+        Example.Criteria criteria = example.createCriteria();
         //排序
         if (null != brandDTO.getOrder()) {
             example.setOrderByClause(brandDTO.getOrderByClause());
         }
         //多条件
         if (null != brandDTO.getName()) {
-            example.createCriteria().andLike("name", "%" + brandDTO.getName() + "%");
+            criteria.andLike("name", "%" + brandDTO.getName() + "%");
         }
+
+        if (null != brandDTO.getId()) {
+            criteria.andEqualTo("id",brandDTO.getId());
+       }
 
         //查询
         List<BrandEntity> list = brandMapper.selectByExample(example);

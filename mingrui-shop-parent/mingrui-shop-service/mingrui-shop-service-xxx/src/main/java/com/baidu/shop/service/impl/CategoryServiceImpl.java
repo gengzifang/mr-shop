@@ -1,9 +1,9 @@
 package com.baidu.shop.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.baidu.shop.base.BaseApiService;
-import com.baidu.shop.base.Result;
-import com.baidu.shop.dto.SpuDTO;
+
+import com.baidu.base.BaseApiService;
+import com.baidu.base.Result;
 import com.baidu.shop.entity.*;
 import com.baidu.shop.mapper.*;
 import com.baidu.shop.service.CategoryService;
@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @ClassName CategoryServiceImpl
@@ -154,6 +156,18 @@ public class CategoryServiceImpl extends BaseApiService implements CategoryServi
 
         List<CategoryEntity> list = categoryMapper.getByBrand(brandId);
 
+
+        return this.setResultSuccess(list);
+    }
+
+    @Override
+    public Result<List<CategoryEntity>> getCateByIds(String cateIds) {
+
+        List<Integer> cidList = Arrays.asList(cateIds.split(","))
+                .stream().map(cidStr -> Integer.parseInt(cidStr))
+                .collect(Collectors.toList());
+
+        List<CategoryEntity> list = categoryMapper.selectByIdList(cidList);
 
         return this.setResultSuccess(list);
     }

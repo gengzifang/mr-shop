@@ -1,6 +1,5 @@
 package com.baidu.shop.mapper;
 
-import com.baidu.shop.base.Result;
 import com.baidu.shop.entity.CategoryEntity;
 import org.apache.ibatis.annotations.Select;
 import tk.mybatis.mapper.additional.idlist.SelectByIdListMapper;

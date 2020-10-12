@@ -1,17 +1,19 @@
 package com.baidu.shop.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.baidu.shop.base.BaseApiService;
-import com.baidu.shop.base.Result;
+import com.baidu.base.BaseApiService;
+import com.baidu.base.Result;
+import com.baidu.shop.component.MrRabbitMQ;
+import com.baidu.shop.constant.MqMessageConstant;
 import com.baidu.shop.dto.SkuDTO;
 import com.baidu.shop.dto.SpuDTO;
 import com.baidu.shop.entity.*;
 import com.baidu.shop.mapper.*;
 import com.baidu.shop.service.GoodsService;
-import com.baidu.shop.status.HTTPStatus;
-import com.baidu.shop.utils.BaiduBeanUtil;
-import com.baidu.shop.utils.ObjectUtil;
-import com.baidu.shop.utils.StringUtil;
+import com.baidu.status.HTTPStatus;
+import com.baidu.utils.BaiduBeanUtil;
+import com.baidu.utils.ObjectUtil;
+import com.baidu.utils.StringUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,6 +54,9 @@ public class GoodsServiceImpl extends BaseApiService implements GoodsService {
     @Resource
     private StockMapper stockMapper;
 
+    @Resource
+    private MrRabbitMQ mrRabbitMQ;
+
 
     @Override
     public Result<JSONObject> editGoodsBySaleable(Integer spuId, Integer saleable) {
@@ -90,6 +95,10 @@ public class GoodsServiceImpl extends BaseApiService implements GoodsService {
         //新增sku
         this.saveSkusAndStocks(spuDTO.getSkus(), spuEntityId, date);
 
+        //新增完之4后 将消息发送到消息队列
+        mrRabbitMQ.send(spuEntity.getId() + "", MqMessageConstant.SPU_ROUT_KEY_SAVE);
+
+
         return this.setResultSuccess();
     }
 
@@ -102,7 +111,7 @@ public class GoodsServiceImpl extends BaseApiService implements GoodsService {
     }
 
     @Override
-    public Result<SkuDTO> getSkuBySpuId(Integer spuId) {
+    public Result<List<SkuDTO>> getSkuBySpuId(Integer spuId) {
 
         List<SkuDTO> list = skuMapper.selectSkuAndStockBySpuId(spuId);
 
@@ -200,7 +209,7 @@ public class GoodsServiceImpl extends BaseApiService implements GoodsService {
 
     @Transactional
     @Override
-    public Result<PageInfo<SpuEntity>> getSpuInfo(SpuDTO spuDTO) {
+    public Result<List<SpuDTO>> getSpuInfo(SpuDTO spuDTO) {
 
         //分页
         if (null != spuDTO.getPage() && null != spuDTO.getRows()) {
@@ -224,6 +233,9 @@ public class GoodsServiceImpl extends BaseApiService implements GoodsService {
             //排序
             if (!StringUtil.isEmpty(spuDTO.getOrder())) {
                 example.setOrderByClause(spuDTO.getOrderByClause());
+            }
+            if (ObjectUtil.isNotNull(spuDTO.getId())) {
+                criteria.andEqualTo("id", spuDTO.getId());
             }
 
         }
@@ -257,6 +269,7 @@ public class GoodsServiceImpl extends BaseApiService implements GoodsService {
         PageInfo<SpuEntity> info = new PageInfo<>(list);
 
         long total = info.getTotal();
+
 
         return this.setResult(HTTPStatus.OK, total + "", spuDtoList);
     }

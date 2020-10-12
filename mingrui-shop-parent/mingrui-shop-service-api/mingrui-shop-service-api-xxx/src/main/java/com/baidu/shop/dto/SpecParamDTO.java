@@ -1,6 +1,6 @@
 package com.baidu.shop.dto;
 
-import com.baidu.shop.validate.group.MingruiOperation;
+import com.baidu.validate.group.MingruiOperation;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
