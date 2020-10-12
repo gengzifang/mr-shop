@@ -1,4 +1,4 @@
-package com.baidu.upload.controller;
+package com.baidu.shop.upload.controller;
 
 import com.baidu.base.Result;
 import com.baidu.status.HTTPStatus;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -33,7 +34,7 @@ public class controller {
     @Value(value = "${mingrui.upload.img.host}")
     private String imgHost;
 
-    @Autowired
+    @Resource
     private FastFileStorageClient storageClient;
 
     @Autowired

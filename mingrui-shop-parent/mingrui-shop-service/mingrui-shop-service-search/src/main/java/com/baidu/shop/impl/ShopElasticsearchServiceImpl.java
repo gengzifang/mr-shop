@@ -69,8 +69,11 @@ public class ShopElasticsearchServiceImpl extends BaseApiService implements Shop
     @Override
     public Result<JSONObject> saveData(Integer spuId) {
 
+        //通过SpuId查询数据
         SpuDTO spuDTO = new SpuDTO();
         spuDTO.setId(spuId);
+
+        //这行代码有可能查询不到数据的
         List<GoodsDoc> goodsDocs = this.esGoodsInfo(spuDTO);
         GoodsDoc goodsDoc = goodsDocs.get(0);
         elasticsearchRestTemplate.save(goodsDoc);
@@ -81,10 +84,11 @@ public class ShopElasticsearchServiceImpl extends BaseApiService implements Shop
     @Override
     public Result<JSONObject> delData(Integer spuId) {
 
+        GoodsDoc goodsDoc = new GoodsDoc();
+        goodsDoc.setId(spuId.longValue());
+        elasticsearchRestTemplate.delete(goodsDoc);
 
-
-
-        return null;
+        return this.setResultSuccess();
     }
 
     @Override

@@ -16,4 +16,8 @@ public interface TemplateService {
     @ApiOperation(value = "初始化静态HTML文件")
     @GetMapping(value = "template/initStaticHTMLTemplate")
     Result<JsonObject> initStaticHTMLTemplate();
+
+    @ApiOperation(value = "通过spuId删除")
+    @GetMapping(value = "template/delHTMLBySpuId")
+    Result<JsonObject> delHTMLBySpuId(Integer spuId);
 }

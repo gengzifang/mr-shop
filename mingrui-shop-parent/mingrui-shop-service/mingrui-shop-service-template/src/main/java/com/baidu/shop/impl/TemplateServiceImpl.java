@@ -58,6 +58,20 @@ public class TemplateServiceImpl extends BaseApiService implements TemplateServi
 
 
     @Override
+    public Result<JsonObject> delHTMLBySpuId(Integer spuId) {
+
+        //文件路径  文件名 后缀
+        File file = new File(staticHTMLPath + File.separator + spuId + ".html");
+
+        if(!file.delete()){
+            return this.setResultError("文件删除失败");
+        }
+
+        return this.setResultSuccess();
+    }
+
+
+    @Override
     public Result<JsonObject> createStaticHTMLTemplate(Integer spuId) {
 
         //也就是说我们现在可以创建上下文了
@@ -74,6 +88,7 @@ public class TemplateServiceImpl extends BaseApiService implements TemplateServi
         PrintWriter writer = null;
         try {
             writer = new PrintWriter(file, "UTF-8");
+            templateEngine.process("item",context,writer);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
@@ -82,7 +97,7 @@ public class TemplateServiceImpl extends BaseApiService implements TemplateServi
             writer.close();
         }
 
-        templateEngine.process("item",context,writer);
+
 
         return this.setResultSuccess();
     }
@@ -135,6 +150,8 @@ public class TemplateServiceImpl extends BaseApiService implements TemplateServi
 
         return this.setResultSuccess();
     }
+
+
 
     private Map<String, Object> getPageInfoBySpuId(Integer spuId) {
 

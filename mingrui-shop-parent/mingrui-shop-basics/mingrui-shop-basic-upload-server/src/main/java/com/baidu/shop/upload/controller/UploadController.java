@@ -1,4 +1,4 @@
-package com.baidu.upload.controller;
+package com.baidu.shop.upload.controller;
 
 import com.baidu.base.BaseApiService;
 import com.baidu.base.Result;
