@@ -84,7 +84,7 @@ public class GoodsServiceImpl extends BaseApiService implements GoodsService {
     }
 
     @Transactional
-    public Integer GoodsSaveTransaction(SpuDTO spuDTO){
+    public Integer GoodsSaveTransaction(SpuDTO spuDTO) {
 
         //新增spu
         SpuEntity spuEntity = BaiduBeanUtil.copyProperties(spuDTO, SpuEntity.class);
