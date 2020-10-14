@@ -8,10 +8,7 @@ import com.baidu.validate.group.MingruiOperation;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,9 +21,13 @@ public interface UserService {
 
     @ApiOperation(value = "校验用户名或手机号唯一")
     @GetMapping(value = "user/check/{value}/{type}")
-    Result<List<UserEntity>> checkUserNameOrPhone(@PathVariable(value = "value") String value,@PathVariable(value = "type") Integer type);
+    Result<List<UserEntity>> checkUserNameOrPhone(@PathVariable(value = "value") String value, @PathVariable(value = "type") Integer type);
 
     @ApiOperation(value = "给手机号发送验证码")
     @PostMapping(value = "user/sendValidCode")
     Result<JSONObject> sendValidCode(@RequestBody UserDTO userDTO);
+
+    @ApiOperation(value = "校验验证码")
+    @GetMapping(value = "user/checkValidCode")
+    Result<JSONObject> checkValidCode(String phone, String code);
 }

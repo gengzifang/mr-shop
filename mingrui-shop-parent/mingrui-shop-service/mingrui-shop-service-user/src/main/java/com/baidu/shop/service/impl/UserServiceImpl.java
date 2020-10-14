@@ -6,7 +6,9 @@ import com.baidu.base.Result;
 import com.baidu.shop.dto.UserDTO;
 import com.baidu.shop.entity.UserEntity;
 import com.baidu.shop.mapper.UserMapper;
+import com.baidu.shop.redis.repository.RedisRepository;
 import com.baidu.shop.service.UserService;
+import com.baidu.status.HTTPStatus;
 import com.baidu.utils.BCryptUtil;
 import com.baidu.utils.BaiduBeanUtil;
 import com.baidu.utils.LuosimaoDuanxinUtil;
@@ -33,6 +35,8 @@ public class UserServiceImpl extends BaseApiService implements UserService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private RedisRepository redisRepository;
 
     @Override
     public Result<JSONObject> register(UserDTO userDTO) {
@@ -73,6 +77,23 @@ public class UserServiceImpl extends BaseApiService implements UserService {
 
         //短信条数只有10条,不够我们测试.所以就不发送短信验证码了,直接在控制台打印就可以
         log.debug("向手机号码:{} 发送验证码:{}",userDTO.getPhone(),code);
+
+
+        redisRepository.set(userConstant.USER_PHONE_CODE_PRE + userDTO.getPhone(),code);
+
+        redisRepository.expire(userConstant.USER_PHONE_CODE_PRE + userDTO.getPhone(),120);
+
+
+        return this.setResultSuccess();
+    }
+
+    @Override
+    public Result<JSONObject> checkValidCode(String phone, String code) {
+
+        String s = redisRepository.get(userConstant.USER_PHONE_CODE_PRE + phone);
+        if(!code.equals(s)){
+            return this.setResultError(HTTPStatus.VALID_CODE_ERROR,"验证码输入错误");
+        }
 
         return this.setResultSuccess();
     }
