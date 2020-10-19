@@ -3,43 +3,19 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>mingrui-shop-parent</artifactId>
+        <artifactId>mingrui-shop-basics</artifactId>
         <groupId>com.baidu</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>mingrui-shop-service</artifactId>
-
-    <!--父级项目不需要打包所有packging的类型为pom-->
-    <packaging>pom</packaging>
-    <modules>
-        <module>mingrui-shop-service-xxx</module>
-        <module>mingrui-shop-service-search</module>
-        <module>mingrui-shop-service-template</module>
-        <module>mingrui-shop-service-user</module>
-        <module>mingrui-shop-service-car</module>
-    </modules>
+    <artifactId>mingrui-shop-basic-user-oauth</artifactId>
 
     <dependencies>
 
-        <!--rabbitmq-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-amqp</artifactId>
-        </dependency>
-
-
-        <!-- SpringBoot-整合Web组件 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <!-- springcloud feign组件 -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
 
         <!--mysql数据库连接-->
@@ -63,10 +39,30 @@
 
         <dependency>
             <groupId>com.baidu</groupId>
-            <artifactId>mingrui-shop-service-api-xxx</artifactId>
+            <artifactId>mingrui-shop-common-oauth</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.baidu</groupId>
+            <artifactId>mingrui-shop-common-core</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+        <!--提供可视化的API文档-->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+
     </dependencies>
+
 
 </project>
