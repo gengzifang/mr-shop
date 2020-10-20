@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +45,37 @@ public class CarServiceImpl extends BaseApiService implements CarService {
 
 
     @Override
+    public Result<JSONObject> carNumUpdate(Long skuId, Integer type, String Token) {
+
+        //获取当前登录用户
+        try {
+            UserInfo userInfo = JwtUtils.getInfoFromToken(Token, jwtConfig.getPublicKey());
+
+            Car car = redisRepository.getHash(MRshopConstant.USER_GOODS_CAR_PRE + userInfo.getId(), skuId + "", Car.class);
+
+
+                /*if (type == 1) {
+                    car.setNum(car.getNum() + 1);
+                } else if (type == 2) {
+                    car.setNum(car.getNum() - 1);
+                }*/
+
+            //type等于1 就 增加 等于2 就减少
+
+
+            car.setNum(type == MRshopConstant.CAR_OPERATION_INCREMENT ? car.getNum() + 1 : car.getNum() - 1);
+
+
+            redisRepository.setHash(MRshopConstant.USER_GOODS_CAR_PRE + userInfo.getId(), car.getSkuId() + "", JSONUtil.toJsonString(car));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return this.setResultSuccess();
+    }
+
+    @Override
     public Result<JSONObject> addCar(Car car, String Token) {
 
         try {
@@ -55,7 +87,7 @@ public class CarServiceImpl extends BaseApiService implements CarService {
 
             Car saveCar = null;
 
-            log.debug("通过key : {},skuID : {}获取到的数据为 : {}", MRshopConstant.USER_GOODS_CAR_PRE + userInfo.getId(), car.getSkuId(), redisCar);
+            log.debug("通过key : {} ,skuid : {} 获取到的数据为 : {}", MRshopConstant.USER_GOODS_CAR_PRE + userInfo.getId(), car.getSkuId(), redisCar);
 
             //原来的用户购物车中有当前要添加到购物车中的商品
             if (ObjectUtil.isNotNull(redisCar)) {
@@ -65,7 +97,7 @@ public class CarServiceImpl extends BaseApiService implements CarService {
                 //saveCar 接值
                 saveCar = redisCar;
 
-                log.debug("当前用户购物车中有将要新增的物品,重新设置num : {}", redisCar.getNum());
+                log.debug("当前用户购物车中有将要新增的商品，重新设置num : {}", redisCar.getNum());
 
             } else {//当前的用户购物车中没有将要新增的商品信息
 
@@ -92,7 +124,7 @@ public class CarServiceImpl extends BaseApiService implements CarService {
                     //saveCar 接值
                     saveCar = car;
 
-                    log.debug("新增商品到购物车redis,KEY : {},skuId : {},car : {}", MRshopConstant.USER_GOODS_CAR_PRE + userInfo.getId(), car.getSkuId(), JSONUtil.toJsonString(car));
+                    log.debug("新增商品到购物车redis,KEY : {} , skuId : {} , car : {}", MRshopConstant.USER_GOODS_CAR_PRE + userInfo.getId(), car.getSkuId(), JSONUtil.toJsonString(car));
                 }
 
             }
@@ -117,9 +149,35 @@ public class CarServiceImpl extends BaseApiService implements CarService {
 
         //遍历新增到购物车
         carList1.stream().forEach(car -> {
-            this.addCar(car,Token);
+            this.addCar(car, Token);
         });
 
         return this.setResultSuccess();
     }
+
+    @Override
+    public Result<List<Car>> getUserGoodsCar(String Token) {
+
+        try {
+            List<Car> cars = new ArrayList<>();
+
+            //获取当前登录用户
+            UserInfo userInfo = JwtUtils.getInfoFromToken(Token, jwtConfig.getPublicKey());
+
+            //通过用户id从redis获取购物车数据
+            Map<String, String> goodsCarMap = redisRepository.getHash(MRshopConstant.USER_GOODS_CAR_PRE + userInfo.getId());
+
+            goodsCarMap.forEach((key, value) -> {
+                Car car = JSONUtil.toBean(value, Car.class);
+                cars.add(car);
+            });
+            return this.setResultSuccess(cars);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return this.setResultError("内部错误");
+    }
+
+
 }
