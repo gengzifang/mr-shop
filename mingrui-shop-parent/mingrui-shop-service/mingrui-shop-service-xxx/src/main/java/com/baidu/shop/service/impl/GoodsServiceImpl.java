@@ -59,6 +59,14 @@ public class GoodsServiceImpl extends BaseApiService implements GoodsService {
 
 
     @Override
+    public Result<SkuEntity> getSkuBySkuId(Long skuId) {
+
+        SkuEntity skuEntity = skuMapper.selectByPrimaryKey(skuId);
+
+        return this.setResultSuccess(skuEntity);
+    }
+
+    @Override
     public Result<JSONObject> editGoodsBySaleable(Integer spuId, Integer saleable) {
 
         if (saleable != null && spuId != null) {
@@ -68,6 +76,8 @@ public class GoodsServiceImpl extends BaseApiService implements GoodsService {
 
         return this.setResultSuccess();
     }
+
+
 
     //@Transactional
     @Override

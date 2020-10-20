@@ -708,6 +708,9 @@
                         ownSpec:JSON.stringify(this.ownSpec)
 
                     }).then(resp => {
+                        console.log(resp);
+                        //跳转到新增购物车成功页面,加上HTTP://为了防止url拼接
+                        window.location.href = '../success-cart.html';
 
                     }).catch(error => console.log(error));
                 }).catch(() => {
@@ -736,8 +739,7 @@
                     }
                     //重置购物车数据
                     mrshop.store.set("carList",carList);
-                    //跳转到新增购物车成功页面,加上HTTP://为了防止url拼接
-                    window.location.href = '../success-cart.html';
+
 
                 });
             }
