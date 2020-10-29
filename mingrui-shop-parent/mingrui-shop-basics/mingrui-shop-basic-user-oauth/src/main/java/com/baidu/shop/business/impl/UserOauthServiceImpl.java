@@ -25,6 +25,9 @@ public class UserOauthServiceImpl implements UserOauthService {
     @Resource
     private UserOauthMapper userOauthMapper;
 
+
+
+
     @Override
     public String login(UserEntity userEntity,JwtConfig jwtConfig) {
 
@@ -51,4 +54,6 @@ public class UserOauthServiceImpl implements UserOauthService {
 
         return token;
     }
+
+
 }

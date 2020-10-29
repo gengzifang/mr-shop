@@ -10,6 +10,7 @@ import com.baidu.shop.utils.CookieUtils;
 import com.baidu.shop.utils.JwtUtils;
 import com.baidu.status.HTTPStatus;
 import com.baidu.utils.ObjectUtil;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.json.JSONObject;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * @ClassName UserOauthController
@@ -35,6 +37,7 @@ public class UserOauthController extends BaseApiService{
 
     @Autowired
     private JwtConfig jwtConfig;
+
 
     @PostMapping(value = "ouath/login")
     @ApiOperation(value = "用户登录")

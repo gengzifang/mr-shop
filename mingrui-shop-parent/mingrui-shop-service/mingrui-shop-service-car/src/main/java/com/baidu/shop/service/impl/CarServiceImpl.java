@@ -19,9 +19,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @ClassName CarServiceImpl
@@ -42,7 +40,6 @@ public class CarServiceImpl extends BaseApiService implements CarService {
 
     @Autowired
     private JwtConfig jwtConfig;
-
 
     @Override
     public Result<JSONObject> carNumUpdate(Long skuId, Integer type, String Token) {

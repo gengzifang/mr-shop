@@ -5,8 +5,10 @@ import com.baidu.base.Result;
 import com.baidu.shop.dto.UserDTO;
 import com.baidu.shop.entity.UserEntity;
 import com.baidu.validate.group.MingruiOperation;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,4 +32,25 @@ public interface UserService {
     @ApiOperation(value = "校验验证码")
     @GetMapping(value = "user/checkValidCode")
     Result<JSONObject> checkValidCode(String phone, String code);
+
+    @ApiOperation(value = "查询用户")
+    @GetMapping(value = "user/getuser")
+    Result<PageInfo<UserEntity>> getuser(@SpringQueryMap UserDTO userDTO);
+
+    @ApiOperation(value = "校验用户名")
+    @GetMapping(value = "user/efficacyUserName")
+    Result<List<UserEntity>> efficacyUserName(UserDTO userDTO);
+
+    @ApiOperation(value = "校验手机号")
+    @GetMapping(value = "user/efficacyPhone")
+    Result<List<UserEntity>> efficacyPhone(UserDTO userDTO);
+
+    @ApiOperation(value = "用户修改")
+    @PutMapping(value = "user/register")
+    Result<JSONObject> userUpdate(@Validated({MingruiOperation.Update.class}) @RequestBody UserDTO userDTO);
+
+    @ApiOperation(value = "用户是否启用")
+    @PutMapping (value = "user/delete")
+    Result<JSONObject> userDelete(@Validated({MingruiOperation.Update.class}) @RequestBody UserDTO userDTO);
 }
+

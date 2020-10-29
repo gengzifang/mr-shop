@@ -61,7 +61,7 @@ eureka:
 mrshop:
   #声明不进行拦截的请求用,分隔
   filter:
-    excludes: /api/oauth/ouath/login,/api/user-center/user/register,/api/search/es/search
+    excludes: /api/oauth/ouath/login,/api/user-center/user/register,/api/search/es/search,/api/manage/category/list,/api/manage/brand/getBrandInfo,/api/manage/slideshowy/save,/api/manage/slideshowy/info,/api/manage/slideshowy/del,/api/user-center/user/getuser,/api/user-center/user/efficacyUserName,/api/user-center/user/efficacyPhone,/api/user-center/user/delete,/api/manage/goods/getSpuInfo
   jwt:
     pubKeyPath: D:\6YF\rea\rea.pub # 公钥地址(私钥加密,公钥解密)
     cookieName: MRSHOP_TOKEN

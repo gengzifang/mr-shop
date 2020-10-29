@@ -28,6 +28,8 @@ public class UserEntity {
 
     private Date created;
 
+    private Integer logicdel;
+
     private String salt;
 
 }

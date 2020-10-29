@@ -37,4 +37,6 @@ public interface CarService {
     @ApiOperation(value = "球盖商品在购物车中的数量")
     @GetMapping(value = "car/carNumUpdate")
     Result<JSONObject> carNumUpdate(Long skuId,Integer type,@CookieValue(value = "MRSHOP_TOKEN") String Token);
+
+
 }

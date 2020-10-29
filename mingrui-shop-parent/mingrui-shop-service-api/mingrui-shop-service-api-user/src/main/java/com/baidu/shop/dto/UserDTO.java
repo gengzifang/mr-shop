@@ -1,5 +1,6 @@
 package com.baidu.shop.dto;
 
+import com.baidu.base.BaseDTO;
 import com.baidu.validate.group.MingruiOperation;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -17,7 +18,7 @@ import java.util.Date;
  **/
 @Data
 @ApiModel(value = "用户DTO")
-public class UserDTO {
+public class UserDTO extends BaseDTO {
 
     @ApiModelProperty(value = "用户主键",example = "1")
     @NotNull(message = "主键不能为空", groups = {MingruiOperation.Update.class})
@@ -36,6 +37,9 @@ public class UserDTO {
     private String phone;
 
     private Date created;
+
+    //逻辑删除标识字段
+    private Integer logicdel;
 
     private String salt;
 
